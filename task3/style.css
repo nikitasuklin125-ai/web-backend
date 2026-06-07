@@ -1,0 +1,191 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #12161c;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+form {
+    max-width: 680px;
+    width: 100%;
+    background: #1e242c;
+    border-radius: 2rem;
+    padding: 2.2rem 2rem 2.5rem;
+    box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    transition: all 0.25s ease;
+    border: 1px solid #2e3a42;
+    animation: fadeSlideUp 0.45s ease-out;
+}
+
+form:hover {
+    border-color: #4a5b66;
+    box-shadow: 0 24px 42px -14px rgba(0, 0, 0, 0.6);
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 550;
+    letter-spacing: -0.3px;
+    color: #e2e8f0;
+    margin-bottom: 1.8rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #2e3b44;
+    display: inline-block;
+}
+
+p {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    font-weight: 500;
+    color: #7f9bb5;
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+    letter-spacing: -0.2px;
+}
+
+input:not([type="radio"]):not([type="checkbox"]),
+select,
+textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #2e3a42;
+    border-radius: 1rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: #10161c;
+    transition: all 0.2s ease;
+    outline: none;
+    color: #e2e8f0;
+}
+
+input:not([type="radio"]):not([type="checkbox"]):focus,
+select:focus,
+textarea:focus {
+    border-color: #7f9bb5;
+    box-shadow: 0 0 0 2px rgba(127, 155, 181, 0.2);
+    background: #0f151c;
+}
+
+textarea {
+    resize: vertical;
+    height: 100px;
+}
+
+select[multiple] {
+    padding: 0.6rem;
+    border-radius: 1rem;
+    background: #10161c;
+}
+
+select[multiple] option {
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.8rem;
+    margin: 2px 0;
+    background: #10161c;
+    color: #cddfed;
+}
+
+select[multiple] option:checked {
+    background: #2e3b44 linear-gradient(0deg, #2e3b44 0%, #2e3b44 100%);
+    color: #bdd4e8;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+    accent-color: #7f9bb5;
+    width: auto;
+    margin-right: 0.4rem;
+}
+
+button {
+    background: #2e3b44;
+    border: none;
+    padding: 0.9rem;
+    width: 100%;
+    border-radius: 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #e2e8f0;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-top: 0.6rem;
+    letter-spacing: 0.3px;
+    border: 1px solid #4a5b66;
+}
+
+button:hover {
+    background: #3a4a55;
+    transform: scale(0.98);
+    border-color: #7f9bb5;
+}
+
+.message-success {
+    background: #1a2a22;
+    color: #8fc9b0;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    text-align: center;
+    border: 1px solid #3a6b55;
+    margin-bottom: 1.5rem;
+}
+
+.message-error {
+    background: #2a1e1c;
+    color: #e0a98b;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    border: 1px solid #8b5a4a;
+    margin-bottom: 1.5rem;
+}
+
+.message-error ul {
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 1.2rem;
+    }
+    form {
+        padding: 1.6rem;
+    }
+    h1 {
+        font-size: 1.8rem;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-track {
+    background: #191f26;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: #556e82;
+    border-radius: 10px;
+}

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Развёртывание анкеты · backend-логи</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #12161c;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            padding: 2rem;
+            color: #e2e8f0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #1e242c;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            padding: 2rem;
+            transition: all 0.25s ease;
+            animation: fadeSlideUp 0.45s ease-out;
+            border: 1px solid #2e3a42;
+        }
+
+        .card:hover {
+            border-color: #4a5b66;
+            box-shadow: 0 24px 42px -14px rgba(0, 0, 0, 0.6);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 550;
+            letter-spacing: -0.3px;
+            color: #e2e8f0;
+            margin-bottom: 0.25rem;
+            border: none;
+        }
+
+        .subhead {
+            font-size: 0.9rem;
+            color: #7f9bb5;
+            margin-bottom: 1.8rem;
+            border-bottom: 1px solid #2e3b44;
+            padding-bottom: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .step {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #2e3b44;
+        }
+
+        .step:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #bdd4e8;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.2px;
+        }
+
+        .step-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #cbdbe0;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-desc {
+            font-size: 0.92rem;
+            color: #9aaebf;
+            margin: 0.5rem 0 0.75rem 0;
+            line-height: 1.5;
+        }
+
+        code {
+            background: #10161c;
+            padding: 0.2rem 0.45rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            font-family: 'Fira Code', 'JetBrains Mono', monospace;
+            color: #bdd4e8;
+            border: 1px solid #2e3a42;
+        }
+
+        pre {
+            background: #10161c;
+            border: 1px solid #2e3a42;
+            border-radius: 1rem;
+            padding: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: #cddfed;
+            margin: 1rem 0;
+            line-height: 1.4;
+        }
+
+        .screenshot {
+            margin: 1rem 0;
+            border-radius: 1rem;
+            border: 1px solid #2e3b44;
+            background: #10161c;
+            padding: 0.5rem;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+
+        .screenshot:hover {
+            border-color: #5e7687;
+        }
+
+        .screenshot img {
+            max-width: 100%;
+            border-radius: 0.8rem;
+            display: block;
+            margin: 0 auto;
+            background: #0b0f14;
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 1rem;
+            }
+            .card {
+                padding: 1.2rem;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .step-title {
+                font-size: 1.15rem;
+            }
+            pre {
+                font-size: 0.7rem;
+                padding: 0.8rem;
+            }
+        }
+
+        /* кастомный скролл */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #191f26;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #556e82;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h1>Развёртывание анкеты</h1>
+        <div class="subhead">последовательность действий на сервере</div>
+
+        <!-- Шаг 1 -->
+        <div class="step">
+            <div class="step-title">1. Подключение по SSH</div>
+            <div class="screenshot">
+                <img src="1.png" alt="SSH подключение">
+            </div>
+            <div class="step-desc">
+                Устанавливается защищённое соединение с сервером <code>kubsu-dev.ru</code>. После ввода пароля открывается удалённая командная оболочка Ubuntu, через которую мы будем управлять сервером.
+            </div>
+            <div class="step-text">
+                Команда: <code>ssh u82356@kubsu-dev.ru -p 58528</code>
+            </div>
+        </div>
+
+        <!-- Шаг 2 -->
+        <div class="step">
+            <div class="step-title">2. Вход в MySQL</div>
+            <div class="screenshot">
+                <img src="2.png" alt="mysql подключение">
+            </div>
+            <div class="step-desc">
+                Запускается клиент MySQL с указанием пользователя и пароля, затем выбирается база данных <code>u82356</code>, в которой будут создаваться таблицы.
+            </div>
+            <div class="step-text">
+                <code>mysql -u u82356 -p'9869396' u82356</code>, затем <code>use u82356;</code>
+            </div>
+        </div>
+
+        <!-- Шаг 3 -->
+        <div class="step">
+            <div class="step-title">3. Таблица applications</div>
+            <div class="screenshot">
+                <img src="3.png" alt="CREATE TABLE applications">
+            </div>
+            <div class="step-desc">
+                Создаётся основная таблица для хранения анкет. В ней будут поля: ФИО, телефон, email, дата рождения, пол, биография и согласие с контрактом. Поле <code>id</code> — первичный ключ, автоинкремент.
+            </div>
+            <pre>CREATE TABLE applications (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    full_name VARCHAR(150) NOT NULL,
+    phone VARCHAR(32) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    birth_date DATE NOT NULL,
+    gender VARCHAR(10) NOT NULL,
+    biography TEXT NOT NULL,
+    contract_accepted TINYINT(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY (id)
+);</pre>
+        </div>
+
+        <!-- Шаг 4 -->
+        <div class="step">
+            <div class="step-title">4. Справочник programming_languages</div>
+            <div class="screenshot">
+                <img src="4.png" alt="CREATE TABLE programming_languages">
+            </div>
+            <div class="step-desc">
+                Таблица-справочник, в которой будут перечислены все возможные языки программирования. Позволяет не хранить названия языков в каждой анкете, а ссылаться на ID.
+            </div>
+            <pre>CREATE TABLE programming_languages (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    name VARCHAR(64) NOT NULL,
+    PRIMARY KEY (id)
+);</pre>
+        </div>
+
+        <!-- Шаг 5 -->
+        <div class="step">
+            <div class="step-title">5. Связующая таблица application_languages</div>
+            <div class="screenshot">
+                <img src="5.png" alt="CREATE TABLE application_languages">
+            </div>
+            <div class="step-desc">
+                Реализует связь «многие ко многим» между анкетами и языками программирования. Одна анкета может выбрать несколько языков, и один язык может быть выбран в нескольких анкетах. Внешние ключи обеспечивают целостность данных.
+            </div>
+            <pre>CREATE TABLE application_languages (
+    application_id INT UNSIGNED NOT NULL,
+    language_id INT UNSIGNED NOT NULL,
+    PRIMARY KEY (application_id, language_id),
+    FOREIGN KEY (application_id) REFERENCES applications(id),
+    FOREIGN KEY (language_id) REFERENCES programming_languages(id)
+);</pre>
+        </div>
+
+        <!-- Шаг 6 -->
+        <div class="step">
+            <div class="step-title">6. Наполнение справочника языков</div>
+            <div class="screenshot">
+                <img src="6.png" alt="INSERT INTO programming_languages">
+            </div>
+            <div class="step-desc">
+                В таблицу <code>programming_languages</code> добавляются 12 записей с идентификаторами, которые соответствуют значениям в HTML-форме. Это позволяет при сохранении анкеты сразу использовать числовые ID языков.
+            </div>
+            <pre>INSERT INTO programming_languages (id, name) VALUES
+(1, 'Pascal'), (2, 'C'), (3, 'C++'), (4, 'JavaScript'),
+(5, 'PHP'), (6, 'Python'), (7, 'Java'), (8, 'Haskell'),
+(9, 'Clojure'), (10, 'Prolog'), (11, 'Scala'), (12, 'Go');</pre>
+        </div>
+
+        <!-- Шаг 7 -->
+        <div class="step">
+            <div class="step-title">7. Таблица credentials</div>
+            <div class="screenshot">
+                <img src="7.png" alt="CREATE TABLE credentials">
+            </div>
+            <div class="step-desc">
+                Таблица для хранения учётных данных пользователей. Связывается с анкетой через <code>application_id</code> (один к одному). Логин уникален, пароль хранится в виде хеша для безопасности.
+            </div>
+            <pre>CREATE TABLE credentials (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    application_id INT UNSIGNED NOT NULL UNIQUE,
+    login VARCHAR(64) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id),
+    FOREIGN KEY (application_id) REFERENCES applications(id)
+);</pre>
+        </div>
+
+        <!-- Шаг 8 -->
+        <div class="step">
+            <div class="step-title">8. Таблица admin_credentials</div>
+            <div class="screenshot">
+                <img src="8.png" alt="CREATE TABLE admin_credentials">
+            </div>
+            <div class="step-desc">
+                Таблица для хранения учётных записей администраторов. Данные нельзя ввести через анкету — только разработчик может добавлять или удалять админов. По этим данным администратор входит в панель управления.
+            </div>
+            <pre>CREATE TABLE admin_credentials (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    login VARCHAR(64) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);</pre>
+        </div>
+
+        <!-- Шаг 9 -->
+        <div class="step">
+            <div class="step-title">9. Таблица applications_v2 (для проекта «Друпал кодер»)</div>
+            <div class="screenshot">
+                <img src="9.png" alt="CREATE TABLE applications_v2">
+            </div>
+            <div class="step-desc">
+                Для нужд дополнительного проекта создана таблица <code>applications_v2</code>. По структуре она похожа на <code>applications</code>, но имеет несколько иные поля, адаптированные под требования проекта «Друпал кодер». Связи с другими таблицами аналогичны оригинальным.
+            </div>
+        </div>
+
+        <!-- Шаг 10 -->
+        <div class="step">
+            <div class="step-title">10. Таблица credentials_v2 (для проекта «Друпал кодер»)</div>
+            <div class="screenshot">
+                <img src="10.png" alt="CREATE TABLE credentials_v2">
+            </div>
+            <div class="step-desc">
+                Совместно с <code>applications_v2</code> создана таблица <code>credentials_v2</code> для хранения логинов и хешей паролей. Принцип работы полностью идентичен оригинальной <code>credentials</code>, но привязана к <code>applications_v2</code>.
+            </div>
+        </div>
+
+        <!-- Шаг 11 -->
+        <div class="step">
+            <div class="step-title">11. Проверка работы анкеты — запись данных в БД</div>
+            <div class="screenshot">
+                <img src="11.png" alt="SELECT из applications и credentials">
+            </div>
+            <div class="step-desc">
+                После заполнения и отправки анкеты данные записываются в таблицы <code>applications</code> и <code>credentials</code>. Запросы <code>SELECT * FROM applications;</code> и <code>SELECT * FROM credentials;</code> показывают сохранённые анкеты и соответствующие учётные записи. Видно, что пароли хранятся в виде хешей.
+            </div>
+            <div class="step-text">
+                <code>SELECT * FROM applications;</code> и <code>SELECT * FROM credentials;</code>
+            </div>
+        </div>
+
+        <!-- Шаг 12 -->
+        <div class="step">
+            <div class="step-title">12. Выход из MySQL</div>
+            <div class="screenshot">
+                <img src="12.png" alt="exit mysql">
+            </div>
+            <div class="step-desc">
+                Команда <code>exit;</code> завершает сеанс MySQL и возвращает в командную оболочку сервера.
+            </div>
+            <div class="step-text">
+                <code>exit;</code>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+SetEnv DB_DSN 	"u82590:3736967@tcp(localhost:3306)/u82590"
+SetEnv JWT_SECRET "vizaaa_JWT_KEY"
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

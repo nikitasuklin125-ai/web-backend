@@ -1,0 +1,618 @@
+<?php
+session_start();
+require_once __DIR__ . '/db.php';
+
+// ---------- Cookie helpers ----------
+function setSessionCookie($name, $value) {
+    setcookie($name, $value, [
+        'expires' => 0,
+        'path' => '/',
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+}
+
+function setPersistentCookie($name, $value) {
+    setcookie($name, $value, [
+        'expires' => time() + 365 * 86400,
+        'path' => '/',
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+}
+
+function deleteCookie($name) {
+    setcookie($name, '', [
+        'expires' => 1,
+        'path' => '/',
+        'httponly' => true
+    ]);
+}
+
+function getCookieValue($name) {
+    return $_COOKIE[$name] ?? null;
+}
+
+function encodeToCookie($data) {
+    return urlencode(json_encode($data));
+}
+
+function decodeFromCookie($encoded, &$target) {
+    $decoded = urldecode($encoded);
+    $data = json_decode($decoded, true);
+    if (json_last_error() === JSON_ERROR_NONE) {
+        $target = $data;
+        return true;
+    }
+    return false;
+}
+
+function saveErrorsToCookie($errors, $formValues) {
+    if (!empty($errors)) {
+        setSessionCookie('form_errors', encodeToCookie($errors));
+    }
+    if (!empty($formValues)) {
+        setSessionCookie('form_values', encodeToCookie($formValues));
+    }
+}
+
+function saveSuccessToCookie($formValues) {
+    setPersistentCookie('form_values', encodeToCookie($formValues));
+    setSessionCookie('form_success', '1');
+}
+
+function loadFromCookies() {
+    $data = [
+        'values' => [],
+        'errors' => [],
+        'success' => false
+    ];
+    $rawValues = getCookieValue('form_values');
+    if ($rawValues !== null) {
+        decodeFromCookie($rawValues, $data['values']);
+    }
+    $rawErrors = getCookieValue('form_errors');
+    if ($rawErrors !== null) {
+        decodeFromCookie($rawErrors, $data['errors']);
+        deleteCookie('form_errors');
+    }
+    if (getCookieValue('form_success') !== null) {
+        $data['success'] = true;
+        deleteCookie('form_success');
+    }
+    return $data;
+}
+
+// ---------- Languages list ----------
+$ALL_LANGUAGES = [
+    ['id' => '1', 'name' => 'Pascal'], ['id' => '2', 'name' => 'C'],
+    ['id' => '3', 'name' => 'C++'], ['id' => '4', 'name' => 'JavaScript'],
+    ['id' => '5', 'name' => 'PHP'], ['id' => '6', 'name' => 'Python'],
+    ['id' => '7', 'name' => 'Java'], ['id' => '8', 'name' => 'Haskell'],
+    ['id' => '9', 'name' => 'Clojure'], ['id' => '10', 'name' => 'Prolog'],
+    ['id' => '11', 'name' => 'Scala'], ['id' => '12', 'name' => 'Go'],
+];
+
+// ---------- mb_strlen fallback ----------
+if (!function_exists('mb_strlen')) {
+    function mb_strlen($str, $encoding = 'UTF-8') {
+        return preg_match_all('/./us', $str, $matches);
+    }
+}
+
+// ---------- Validation ----------
+function validateFormData($post) {
+    $data = [
+        'name' => '', 'phone' => '', 'email' => '', 'birthdate' => '',
+        'gender' => '', 'bio' => '', 'languages' => [], 'contract' => false
+    ];
+    $errors = [];
+
+    // Name
+    $name = trim($post['name'] ?? '');
+    if ($name === '') {
+        $errors['name'] = 'Name is required';
+    } else {
+        $len = mb_strlen($name, 'UTF-8');
+        if ($len > 150) {
+            $errors['name'] = 'Name must be at most 150 characters';
+        } elseif (!preg_match('/^[\p{L} ]+$/u', $name)) {
+            $errors['name'] = 'Name contains invalid characters';
+        } else {
+            $data['name'] = $name;
+        }
+    }
+
+    // Phone
+    $phone = trim($post['phone'] ?? '');
+    if ($phone === '') {
+        $errors['phone'] = 'Phone is required';
+    } elseif (!preg_match('/^\+?[0-9()\- ]{7,32}$/', $phone)) {
+        $errors['phone'] = 'Phone contains invalid characters';
+    } else {
+        $data['phone'] = $phone;
+    }
+
+    // Email
+    $email = trim($post['email'] ?? '');
+    if ($email === '') {
+        $errors['email'] = 'Email is required';
+    } elseif (strlen($email) > 255) {
+        $errors['email'] = 'Email must be at most 255 characters';
+    } elseif (!preg_match('/^[^@\s]+@[^@\s]+\.[^@\s]+$/', $email)) {
+        $errors['email'] = 'Email format is invalid, try name@domain.com';
+    } else {
+        $data['email'] = $email;
+    }
+
+    // Birthdate
+    $birthdate = trim($post['birthdate'] ?? '');
+    if ($birthdate === '') {
+        $errors['birthdate'] = 'Birthdate is required';
+    } else {
+        $date = DateTime::createFromFormat('Y-m-d', $birthdate);
+        if (!$date || $date->format('Y-m-d') !== $birthdate) {
+            $errors['birthdate'] = 'Birthdate format is invalid (expected YYYY-MM-DD)';
+        } elseif ($date > new DateTime()) {
+            $errors['birthdate'] = 'Birthdate cannot be in the future';
+        } else {
+            $data['birthdate'] = $birthdate;
+        }
+    }
+
+    // Gender
+    $gender = $post['gender'] ?? '';
+    if (!in_array($gender, ['male', 'female'], true)) {
+        $errors['gender'] = "Gender must be 'male' or 'female'";
+    } else {
+        $data['gender'] = $gender;
+    }
+
+    // Languages
+    $languages = $post['languages'] ?? [];
+    if (!is_array($languages)) $languages = [];
+    if (count($languages) === 0) {
+        $errors['languages'] = 'At least one language must be selected';
+    } else {
+        $validIds = array_map('strval', range(1, 12));
+        $allValid = true;
+        foreach ($languages as $lang) {
+            if (!in_array((string)$lang, $validIds, true)) {
+                $errors['languages'] = 'Invalid language selection';
+                $allValid = false;
+                break;
+            }
+        }
+        if ($allValid) {
+            $data['languages'] = $languages;
+        }
+    }
+
+    // Bio
+    $bio = trim($post['bio'] ?? '');
+    if ($bio === '') {
+        $errors['bio'] = 'Bio is required';
+    } else {
+        $data['bio'] = $bio;
+    }
+
+    // Contract
+    $contract = $post['contract'] ?? '';
+    if ($contract === '') {
+        $errors['contract'] = 'You must accept the contract';
+    } elseif ($contract !== 'on') {
+        $errors['contract'] = 'Invalid contract value';
+    } else {
+        $data['contract'] = true;
+    }
+
+    return [$data, $errors];
+}
+
+// ---------- Database save ----------
+function saveToDatabase($pdo, $data) {
+    try {
+        $pdo->beginTransaction();
+
+        $stmt = $pdo->prepare("
+            INSERT INTO applications (full_name, phone, email, birth_date, gender, biography, contract_accepted)
+            VALUES (:full_name, :phone, :email, :birth_date, :gender, :biography, 1)
+        ");
+        $stmt->execute([
+            ':full_name' => $data['name'],
+            ':phone' => $data['phone'],
+            ':email' => $data['email'],
+            ':birth_date' => $data['birthdate'],
+            ':gender' => $data['gender'],
+            ':biography' => $data['bio']
+        ]);
+        $appId = $pdo->lastInsertId();
+
+        $langStmt = $pdo->prepare("INSERT INTO application_languages (application_id, language_id) VALUES (:app_id, :lang_id)");
+        foreach ($data['languages'] as $langId) {
+            $langStmt->execute([':app_id' => $appId, ':lang_id' => $langId]);
+        }
+
+        $pdo->commit();
+        return true;
+    } catch (PDOException $e) {
+        $pdo->rollBack();
+        error_log('saveToDatabase error: ' . $e->getMessage());
+        return false;
+    }
+}
+
+// ---------- Render form (graphite style) ----------
+function renderForm($pageData, $languages) {
+    $values = $pageData['values'];
+    $errors = $pageData['errors'];
+    $success = $pageData['success'];
+
+    $isSelectedLang = function($id) use ($values) {
+        return in_array($id, $values['languages'] ?? []);
+    };
+
+    header('Content-Type: text/html; charset=utf-8');
+    ?>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анкета · backend форма</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #12161c;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .card {
+            background: #1e242c;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            padding: 2.2rem 2rem 2.5rem;
+            width: 100%;
+            max-width: 680px;
+            transition: all 0.25s ease;
+            border: 1px solid #2e3a42;
+            animation: fadeSlideUp 0.45s ease-out;
+        }
+
+        .card:hover {
+            border-color: #4a5b66;
+            box-shadow: 0 24px 42px -14px rgba(0, 0, 0, 0.6);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 550;
+            letter-spacing: -0.3px;
+            color: #e2e8f0;
+            margin-bottom: 1.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #2e3b44;
+            display: inline-block;
+        }
+
+        .field {
+            margin-bottom: 1.5rem;
+        }
+
+        .field > label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #7f9bb5;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.2px;
+        }
+
+        input[type="text"], input[type="tel"], input[type="email"], input[type="date"], select, textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #2e3a42;
+            border-radius: 1rem;
+            font-size: 0.95rem;
+            font-family: inherit;
+            background: #10161c;
+            transition: all 0.2s ease;
+            outline: none;
+            color: #e2e8f0;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #7f9bb5;
+            box-shadow: 0 0 0 2px rgba(127, 155, 181, 0.2);
+            background: #0f151c;
+        }
+
+        .field-error input, .field-error select, .field-error textarea {
+            border-color: #b87a6c;
+            background: #1f1820;
+        }
+
+        .field-error input:focus, .field-error select:focus, .field-error textarea:focus {
+            border-color: #e0a98b;
+        }
+
+        .error-msg {
+            font-size: 0.75rem;
+            color: #e0a98b;
+            margin-top: 0.3rem;
+            margin-left: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .error-msg::before {
+            content: "▸";
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #b87a6c;
+            flex-shrink: 0;
+        }
+
+        textarea {
+            height: 110px;
+            resize: vertical;
+        }
+
+        select[multiple] {
+            height: 160px;
+            padding: 0.6rem;
+            border-radius: 1rem;
+            background: #10161c;
+        }
+
+        select[multiple] option {
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.8rem;
+            margin: 2px 0;
+            background: #10161c;
+            color: #cddfed;
+        }
+
+        select[multiple] option:checked {
+            background: #2e3b44 linear-gradient(0deg, #2e3b44 0%, #2e3b44 100%);
+            color: #bdd4e8;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 0.3rem;
+        }
+
+        .radio-group label, .checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: #bdd4e8;
+            cursor: pointer;
+        }
+
+        input[type="radio"], input[type="checkbox"] {
+            accent-color: #7f9bb5;
+            width: 1rem;
+            height: 1rem;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: #2e3b44;
+            color: #e2e8f0;
+            border: 1px solid #4a5b66;
+            border-radius: 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            margin-top: 0.6rem;
+            letter-spacing: 0.3px;
+        }
+
+        .btn:hover {
+            background: #3a4a55;
+            transform: scale(0.98);
+            border-color: #7f9bb5;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .success-banner {
+            background: #1a2a22;
+            border: 1px solid #3a6b55;
+            border-radius: 1.2rem;
+            padding: 0.9rem 1.2rem;
+            color: #8fc9b0;
+            font-size: 0.9rem;
+            margin-bottom: 1.8rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 1.2rem;
+            }
+            .card {
+                padding: 1.6rem;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .radio-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.6rem;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #191f26;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #556e82;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Анкета</h1>
+
+    <?php if ($success): ?>
+    <div class="success-banner">Анкета успешно сохранена</div>
+    <?php endif; ?>
+
+    <form action="form.php" method="POST">
+        <div class="field <?= isset($errors['name']) ? 'field-error' : '' ?>">
+            <label>ФИО</label>
+            <input type="text" name="name" value="<?= htmlspecialchars($values['name'] ?? '') ?>">
+            <?php if (isset($errors['name'])): ?>
+                <div class="error-msg"><?= htmlspecialchars($errors['name']) ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="field <?= isset($errors['phone']) ? 'field-error' : '' ?>">
+            <label>Телефон</label>
+            <input type="tel" name="phone" value="<?= htmlspecialchars($values['phone'] ?? '') ?>">
+            <?php if (isset($errors['phone'])): ?>
+                <div class="error-msg"><?= htmlspecialchars($errors['phone']) ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="field <?= isset($errors['email']) ? 'field-error' : '' ?>">
+            <label>Email</label>
+            <input type="email" name="email" value="<?= htmlspecialchars($values['email'] ?? '') ?>">
+            <?php if (isset($errors['email'])): ?>
+                <div class="error-msg"><?= htmlspecialchars($errors['email']) ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="field <?= isset($errors['birthdate']) ? 'field-error' : '' ?>">
+            <label>Дата рождения</label>
+            <input type="date" name="birthdate" value="<?= htmlspecialchars($values['birthdate'] ?? '') ?>">
+            <?php if (isset($errors['birthdate'])): ?>
+                <div class="error-msg"><?= htmlspecialchars($errors['birthdate']) ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="field <?= isset($errors['gender']) ? 'field-error' : '' ?>">
+            <label>Пол</label>
+            <div class="radio-group">
+                <label><input type="radio" name="gender" value="male" <?= ($values['gender'] ?? '') === 'male' ? 'checked' : '' ?>> Мужской</label>
+                <label><input type="radio" name="gender" value="female" <?= ($values['gender'] ?? '') === 'female' ? 'checked' : '' ?>> Женский</label>
+            </div>
+            <?php if (isset($errors['gender'])): ?>
+                <div class="error-msg"><?= htmlspecialchars($errors['gender']) ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="field <?= isset($errors['languages']) ? 'field-error' : '' ?>">
+            <label>Любимый язык программирования</label>
+            <select name="languages[]" multiple>
+                <?php foreach ($languages as $lang): ?>
+                <option value="<?= htmlspecialchars($lang['id']) ?>" <?= $isSelectedLang($lang['id']) ? 'selected' : '' ?>><?= htmlspecialchars($lang['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <?php if (isset($errors['languages'])): ?>
+                <div class="error-msg"><?= htmlspecialchars($errors['languages']) ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="field <?= isset($errors['bio']) ? 'field-error' : '' ?>">
+            <label>Биография</label>
+            <textarea name="bio"><?= htmlspecialchars($values['bio'] ?? '') ?></textarea>
+            <?php if (isset($errors['bio'])): ?>
+                <div class="error-msg"><?= htmlspecialchars($errors['bio']) ?></div>
+            <?php endif; ?>
+        </div>
+
+        <div class="field <?= isset($errors['contract']) ? 'field-error' : '' ?>">
+            <label class="checkbox-label">
+                <input type="checkbox" name="contract" <?= ($values['contract'] ?? false) ? 'checked' : '' ?>> С контрактом ознакомлен(а)
+            </label>
+            <?php if (isset($errors['contract'])): ?>
+                <div class="error-msg"><?= htmlspecialchars($errors['contract']) ?></div>
+            <?php endif; ?>
+        </div>
+
+        <button type="submit" class="btn">Сохранить</button>
+    </form>
+</div>
+</body>
+</html>
+<?php
+}
+
+// ---------- Main handler ----------
+$method = $_SERVER['REQUEST_METHOD'];
+
+if ($method === 'GET') {
+    $pageData = loadFromCookies();
+    renderForm($pageData, $ALL_LANGUAGES);
+    exit;
+}
+
+if ($method === 'POST') {
+    list($formData, $errors) = validateFormData($_POST);
+
+    if (!empty($errors)) {
+        saveErrorsToCookie($errors, $formData);
+        header('Location: form.php');
+        exit;
+    }
+
+    $saved = saveToDatabase($pdo, $formData);
+    if (!$saved) {
+        http_response_code(500);
+        echo 'Internal server error. Try again later';
+        exit;
+    }
+
+    saveSuccessToCookie($formData);
+    header('Location: form.php');
+    exit;
+}
+
+http_response_code(405);
+echo 'Method is not allowed';

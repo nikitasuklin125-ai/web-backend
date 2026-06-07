@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web backend · Task 1 — скриншоты</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #12161c;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            padding: 2rem;
+            color: #e2e8f0;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #1e242c;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            padding: 2rem;
+            transition: all 0.25s ease;
+            animation: fadeSlideUp 0.45s ease-out;
+            border: 1px solid #2e3a42;
+        }
+
+        .card:hover {
+            border-color: #4a5b66;
+            box-shadow: 0 24px 42px -14px rgba(0, 0, 0, 0.6);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 550;
+            letter-spacing: -0.3px;
+            color: #e2e8f0;
+            margin-bottom: 0.25rem;
+        }
+
+        .subhead {
+            font-size: 0.9rem;
+            color: #7f9bb5;
+            margin-bottom: 1.8rem;
+            border-bottom: 1px solid #2e3b44;
+            padding-bottom: 0.8rem;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .screenshot-card {
+            background: #10161c;
+            border-radius: 1.2rem;
+            border: 1px solid #2e3a42;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .screenshot-card:hover {
+            border-color: #5e7687;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .screenshot-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: #0b0f14;
+        }
+
+        .screenshot-label {
+            padding: 0.6rem 0.8rem;
+            font-size: 0.75rem;
+            font-family: 'Fira Code', monospace;
+            color: #7f9bb5;
+            border-top: 1px solid #2e3b44;
+            background: #0f151c;
+            text-align: center;
+            letter-spacing: 0.3px;
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 1rem;
+            }
+            .card {
+                padding: 1.2rem;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .gallery {
+                gap: 1rem;
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* кастомный скролл */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #191f26;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #556e82;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h1>Task 1 · развёртывание</h1>
+        <div class="subhead">скриншоты процесса</div>
+
+        <div class="gallery">
+            <div class="screenshot-card">
+                <img src="Снимок экрана 2026-02-19 в 11.35.34.png" alt="Screenshot 1">
+                <div class="screenshot-label">1 — подключение</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="Снимок экрана 2026-02-19 в 11.35.46.png" alt="Screenshot 2">
+                <div class="screenshot-label">2 — авторизация</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="Снимок экрана 2026-02-19 в 11.38.23.png" alt="Screenshot 3">
+                <div class="screenshot-label">3 — настройка сервера</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="Снимок экрана 2026-02-19 в 11.39.09.png" alt="Screenshot 4">
+                <div class="screenshot-label">4 — проверка доступа</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="Снимок экрана 2026-02-19 в 11.39.57.png" alt="Screenshot 5">
+                <div class="screenshot-label">5 — загрузка данных</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="Снимок экрана 2026-02-19 в 11.40.46.png" alt="Screenshot 6">
+                <div class="screenshot-label">6 — конфигурация БД</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="Снимок экрана 2026-02-19 в 11.41.10.png" alt="Screenshot 7">
+                <div class="screenshot-label">7 — импорт таблиц</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="Снимок экрана 2026-02-19 в 11.41.35.png" alt="Screenshot 8">
+                <div class="screenshot-label">8 — проверка целостности</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="Снимок экрана 2026-02-19 в 11.54.24.png" alt="Screenshot 9">
+                <div class="screenshot-label">9 — тестовый запрос</div>
+            </div>
+            <div class="screenshot-card">
+                <img src="Снимок экрана 2026-02-19 в 13.09.58.png" alt="Screenshot 10">
+                <div class="screenshot-label">10 — финальный вывод</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

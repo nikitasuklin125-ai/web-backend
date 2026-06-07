@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анкета | backend форма</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <form action="form.php" method="POST">
+        <h1>Анкета</h1>
+        <p>
+            <label>ФИО</label>
+            <input type="text" name="name">
+        </p>
+        <p>
+            <label>Телефон</label>
+            <input type="tel" name="phone">
+        </p>
+        <p>
+            <label>Email</label>
+            <input type="email" name="email">
+        </p>
+        <p>
+            <label>Дата рождения</label>
+            <input type="date" name="birthdate">
+        </p>
+        <p>
+            <label>Пол</label>
+            <label><input type="radio" name="gender" value="male"> Мужской</label><br>
+            <label><input type="radio" name="gender" value="female"> Женский</label>
+        </p>
+        <p>
+            <label>Любимый язык программирования</label>
+            <select name="languages[]" multiple size="5">
+                <option value="1">Pascal</option>
+                <option value="2">C</option>
+                <option value="3">C++</option>
+                <option value="4">JavaScript</option>
+                <option value="5">PHP</option>
+                <option value="6">Python</option>
+                <option value="7">Java</option>
+                <option value="8">Haskell</option>
+                <option value="9">Clojure</option>
+                <option value="10">Prolog</option>
+                <option value="11">Scala</option>
+                <option value="12">Go</option>
+            </select>
+        </p>
+        <p>
+            <label>Биография</label>
+            <textarea name="bio"></textarea>
+        </p>
+        <p>
+            <label>
+                <input type="checkbox" name="contract">
+                С контрактом ознакомлен
+            </label>
+        </p>
+        <p>
+            <button type="submit">Сохранить</button>
+        </p>
+    </form>
+</body>
+</html>

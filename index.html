@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Web backend | Лабораторные работы</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #12161c;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, 'SF Pro Text', Roboto, Helvetica, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.8rem;
+            position: relative;
+        }
+
+        /* глубокая графитовая текстура */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 20%, rgba(70, 80, 90, 0.08), transparent 80%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .tasks-container {
+            max-width: 740px;
+            width: 100%;
+            background: #1e242c;
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            padding: 2.2rem 2rem 2.5rem 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            transition: all 0.25s ease;
+            position: relative;
+            z-index: 2;
+            border: 1px solid #2e3a42;
+        }
+
+        .tasks-container:hover {
+            border-color: #4a5b66;
+            box-shadow: 0 24px 42px -14px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+        }
+
+        /* заголовок — строгий, без градиентов-переливов */
+        h1 {
+            font-size: 2rem;
+            font-weight: 550;
+            letter-spacing: -0.3px;
+            color: #e2e8f0;
+            margin-bottom: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            border: none;
+            position: relative;
+            font-family: 'Inter', system-ui;
+        }
+
+        h1::after {
+            content: "";
+            display: block;
+            width: 56px;
+            height: 2px;
+            background: #5f7f9a;
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            border-radius: 4px;
+            transition: width 0.2s;
+        }
+
+        .tasks-container:hover h1::after {
+            width: 90px;
+            background: #7b98b3;
+        }
+
+        .task-list {
+            list-style: none;
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+
+        .task-list li {
+            background: #272f38;
+            border-radius: 1.4rem;
+            transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid #36434d;
+            overflow: hidden;
+        }
+
+        .task-list li:hover {
+            background: #2f3a44;
+            border-color: #5e7687;
+            transform: translateX(4px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+        }
+
+        .task-list a {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.4rem;
+            text-decoration: none;
+            font-weight: 470;
+            font-size: 1rem;
+            color: #cfdfed;
+            transition: all 0.2s;
+            border-radius: 1.4rem;
+            gap: 12px;
+            font-family: 'Inter', system-ui;
+        }
+
+        .task-list a:hover {
+            color: #ffffff;
+            background: #364652;
+        }
+
+        /* символ — строгий, без эмодзи и лишних украшений */
+        .task-list a::before {
+            content: "▸";
+            display: inline-flex;
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: #7f9bb5;
+            transition: all 0.2s ease;
+            margin-right: 2px;
+        }
+
+        .task-list a:hover::before {
+            transform: translateX(3px);
+            color: #bdd4e8;
+        }
+
+        /* индикатор для PDF-файлов — без смайликов, только текст */
+        .task-list a[href$=".pdf"]::after {
+            content: "[PDF]";
+            font-size: 0.7rem;
+            font-weight: 400;
+            font-family: monospace;
+            margin-left: auto;
+            opacity: 0.7;
+            letter-spacing: 0.2px;
+            background: #1f2a33;
+            padding: 0.2rem 0.5rem;
+            border-radius: 30px;
+            transition: opacity 0.2s;
+        }
+
+        .task-list a[href$=".pdf"]:hover::after {
+            opacity: 1;
+            background: #2d3f4b;
+            color: #e2eefc;
+        }
+
+        /* кастомный скролл */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #191f26;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #556e82;
+            border-radius: 10px;
+        }
+
+        /* подпись в стиле терминала — без декоративных точек */
+        .tasks-container::after {
+            content: "web_backend / tasks";
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.7rem;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            letter-spacing: 0.4px;
+            color: #7e8f9e;
+            border-top: 1px solid #2e3b44;
+            padding-top: 1.2rem;
+            transition: color 0.2s;
+        }
+
+        .tasks-container:hover::after {
+            color: #9bb2c5;
+        }
+
+        /* анимация появления */
+        .tasks-container {
+            animation: fadeSlideUp 0.45s ease-out;
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* адаптивность */
+        @media (max-width: 560px) {
+            body {
+                padding: 1rem;
+            }
+            .tasks-container {
+                padding: 1.5rem 1.2rem;
+                border-radius: 1.6rem;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .task-list a {
+                padding: 0.7rem 1rem;
+                font-size: 0.9rem;
+            }
+            .task-list a::before {
+                font-size: 0.95rem;
+            }
+            .task-list a[href$=".pdf"]::after {
+                font-size: 0.6rem;
+                padding: 0.1rem 0.4rem;
+            }
+        }
+
+        /* фокус для доступности */
+        .task-list a:focus-visible {
+            outline: 2px solid #7f9bb5;
+            outline-offset: 2px;
+            border-radius: 1.2rem;
+            background: #2d3b44;
+        }
+    </style>
+</head>
+<body>
+    <div class="tasks-container">
+        <h1>backend · задания</h1>
+        <ul class="task-list">
+            <li><a href="./task1/index.html">Task 1</a></li>
+            <li><a href="./task2/index.html">Task 2</a></li>
+            <li><a href="./task3/index.html">Task 3</a></li>
+            <li><a href="./task4/form.php">Task 4</a></li>
+            <li><a href="./task5/index.php">Task 5</a></li>
+            <li><a href="./task6/index.php">Task 6</a></li>
+            <li><a href="./task7/Аудит безопасности веб.pdf">Task 7</a></li>
+            <li><a href="./task8/index.html">Task 8 </a></li>
+            <li><a href="./screenshots/index.html">скриншоты и отчёты</a></li>
+        </ul>
+    </div>
+</body>
+</html>
