@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web backend · Task 1 — скриншоты</title>
+    <title>Задание 1 – скриншоты · графитовый стиль</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1300px;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
@@ -43,25 +43,26 @@
             font-weight: 550;
             letter-spacing: -0.3px;
             color: #e2e8f0;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            border-bottom: 2px solid #2e3b44;
+            padding-bottom: 0.3rem;
         }
 
         .subhead {
+            background: #10161c;
+            border-radius: 1.2rem;
+            padding: 0.8rem 1.2rem;
+            margin: 1rem 0 1.8rem;
             font-size: 0.9rem;
             color: #7f9bb5;
-            margin-bottom: 1.8rem;
-            border-bottom: 1px solid #2e3b44;
-            padding-bottom: 0.8rem;
+            border: 1px solid #2e3a42;
             font-family: 'Fira Code', monospace;
         }
 
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .screenshot-card {
+        /* Каждый скриншот — отдельный блок, во всю ширину */
+        .screenshot-block {
+            margin-bottom: 2rem;
             background: #10161c;
             border-radius: 1.2rem;
             border: 1px solid #2e3a42;
@@ -69,28 +70,39 @@
             transition: all 0.2s ease;
         }
 
-        .screenshot-card:hover {
+        .screenshot-block:hover {
             border-color: #5e7687;
-            transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
 
-        .screenshot-card img {
+        .screenshot-block img {
             width: 100%;
             height: auto;
             display: block;
             background: #0b0f14;
+            /* Убираем любые ограничения по высоте — картинка покажется полностью */
         }
 
         .screenshot-label {
-            padding: 0.6rem 0.8rem;
-            font-size: 0.75rem;
+            padding: 0.7rem 1rem;
+            font-size: 0.85rem;
             font-family: 'Fira Code', monospace;
             color: #7f9bb5;
             border-top: 1px solid #2e3b44;
             background: #0f151c;
             text-align: center;
             letter-spacing: 0.3px;
+        }
+
+        .final-note {
+            background: #10161c;
+            border-radius: 1.2rem;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #8fc9b0;
+            border: 1px solid #3a6b55;
         }
 
         @keyframes fadeSlideUp {
@@ -114,13 +126,12 @@
             h1 {
                 font-size: 1.6rem;
             }
-            .gallery {
-                gap: 1rem;
-                grid-template-columns: 1fr;
+            .screenshot-label {
+                font-size: 0.75rem;
+                padding: 0.5rem;
             }
         }
 
-        /* кастомный скролл */
         ::-webkit-scrollbar {
             width: 5px;
         }
@@ -137,50 +148,49 @@
 <body>
 <div class="container">
     <div class="card">
-        <h1>Task 1 · развёртывание</h1>
-        <div class="subhead">скриншоты процесса</div>
+        <h1>Задание 1 – работа с сетью</h1>
+        <div class="subhead">
+            Сервер: <strong>kubsu-dev.ru</strong>
+        </div>
 
-        <div class="gallery">
-            <div class="screenshot-card">
-                <img src="Снимок экрана 2026-02-19 в 11.35.34.png" alt="Screenshot 1">
-                <div class="screenshot-label">1 — подключение</div>
-            </div>
-            <div class="screenshot-card">
-                <img src="Снимок экрана 2026-02-19 в 11.35.46.png" alt="Screenshot 2">
-                <div class="screenshot-label">2 — авторизация</div>
-            </div>
-            <div class="screenshot-card">
-                <img src="Снимок экрана 2026-02-19 в 11.38.23.png" alt="Screenshot 3">
-                <div class="screenshot-label">3 — настройка сервера</div>
-            </div>
-            <div class="screenshot-card">
-                <img src="Снимок экрана 2026-02-19 в 11.39.09.png" alt="Screenshot 4">
-                <div class="screenshot-label">4 — проверка доступа</div>
-            </div>
-            <div class="screenshot-card">
-                <img src="Снимок экрана 2026-02-19 в 11.39.57.png" alt="Screenshot 5">
-                <div class="screenshot-label">5 — загрузка данных</div>
-            </div>
-            <div class="screenshot-card">
-                <img src="Снимок экрана 2026-02-19 в 11.40.46.png" alt="Screenshot 6">
-                <div class="screenshot-label">6 — конфигурация БД</div>
-            </div>
-            <div class="screenshot-card">
-                <img src="Снимок экрана 2026-02-19 в 11.41.10.png" alt="Screenshot 7">
-                <div class="screenshot-label">7 — импорт таблиц</div>
-            </div>
-            <div class="screenshot-card">
-                <img src="Снимок экрана 2026-02-19 в 11.41.35.png" alt="Screenshot 8">
-                <div class="screenshot-label">8 — проверка целостности</div>
-            </div>
-            <div class="screenshot-card">
-                <img src="Снимок экрана 2026-02-19 в 11.54.24.png" alt="Screenshot 9">
-                <div class="screenshot-label">9 — тестовый запрос</div>
-            </div>
-            <div class="screenshot-card">
-                <img src="Снимок экрана 2026-02-19 в 13.09.58.png" alt="Screenshot 10">
-                <div class="screenshot-label">10 — финальный вывод</div>
-            </div>
+        <!-- Каждый скриншот на всю ширину, с подписью -->
+        <div class="screenshot-block">
+            <img src="screenshots/1.png" alt="Вход по SSH">
+            <div class="screenshot-label">1 – подключение по SSH</div>
+        </div>
+
+        <div class="screenshot-block">
+            <img src="screenshots/2.png" alt="IP-адрес kubsu.ru (ping)">
+            <div class="screenshot-label">2 – IP-адрес kubsu.ru (ping)</div>
+        </div>
+
+        <div class="screenshot-block">
+            <img src="screenshots/3.png" alt="A и MX записи kubsu.ru">
+            <div class="screenshot-label">3 – A и MX записи kubsu.ru (nslookup)</div>
+        </div>
+
+        <div class="screenshot-block">
+            <img src="screenshots/4.png" alt="A и MX записи kubsu-dev.ru">
+            <div class="screenshot-label">4 – A и MX записи kubsu-dev.ru (nslookup)</div>
+        </div>
+
+        <div class="screenshot-block">
+            <img src="screenshots/5.png" alt="Дата регистрации kubsu.ru">
+            <div class="screenshot-label">5 – дата регистрации kubsu.ru (whois)</div>
+        </div>
+
+        <div class="screenshot-block">
+            <img src="screenshots/6.png" alt="Дата регистрации kubsu-dev.ru">
+            <div class="screenshot-label">6 – дата регистрации kubsu-dev.ru (whois)</div>
+        </div>
+
+        <div class="screenshot-block">
+            <img src="screenshots/71.png" alt="SFTP-копирование файлов">
+            <div class="screenshot-label">7 – SFTP-копирование файлов</div>
+        </div>
+
+        <div class="final-note">
+            Все скриншоты выполнены в соответствии с заданием.
         </div>
     </div>
 </div>

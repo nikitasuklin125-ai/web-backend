@@ -2,7 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Web backend · Task 2 (telnet)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web backend · Task 2 (telnet, сервер u82590)</title>
     <style>
         * {
             margin: 0;
@@ -69,13 +70,6 @@
             letter-spacing: -0.3px;
         }
 
-        hr {
-            margin: 2rem 0;
-            border: none;
-            height: 1px;
-            background: #2e3b44;
-        }
-
         pre {
             background: #10161c;
             border: 1px solid #2e3a42;
@@ -124,16 +118,15 @@
             border-color: #5e7687;
         }
 
-        .badge {
-            display: inline-block;
+        .final-message {
             background: #10161c;
-            color: #7f9bb5;
-            border-radius: 2rem;
-            padding: 0.2rem 1rem;
-            font-size: 0.7rem;
-            font-weight: 500;
-            margin-right: 0.5rem;
-            border: 1px solid #2e3a42;
+            border-radius: 1.2rem;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            color: #8fc9b0;
+            border: 1px solid #3a6b55;
+            font-size: 0.95rem;
+            margin-top: 1rem;
         }
 
         @keyframes fadeSlideUp {
@@ -184,9 +177,8 @@
     <div class="task-card">
         <h1>Task 2 – выполнение через telnet</h1>
         <div class="subhead">
-            Сервер: <strong>u82356.kubsu-dev.ru</strong><br>
-            Все запросы отправлялись через <code>telnet u82356.kubsu-dev.ru 80</code>.<br>
-            После заголовков обязательно пустая строка (два нажатия Enter).
+            Сервер: <strong>u82590.kubsu-dev.ru</strong><br>
+            Все запросы отправлялись через <code>telnet u82590.kubsu-dev.ru 80</code>.<br>
         </div>
     </div>
 
@@ -195,106 +187,100 @@
         <h2>1. GET главной страницы – HTTP/1.0</h2>
         <p><strong>Запрос:</strong></p>
         <pre>GET / HTTP/1.0
-Host: u82356.kubsu-dev.ru
+Host: u82590.kubsu-dev.ru
 
 </pre>
-        <p><strong>Ответ (заголовки):</strong></p>
+        <p><strong>Ответ (заголовки + тело):</strong></p>
         <pre>HTTP/1.1 200 OK
-Date: Wed, 20 May 2026 22:56:35 GMT
+Date: Sun, 07 Jun 2026 22:21:11 GMT
 Server: Apache/2.4.58 (Ubuntu)
 Vary: Accept-Encoding
-Content-Length: 1227
-Connection: close
-Content-Type: text/html;charset=UTF-8</pre>
-        <p><em>Тело ответа – HTML-код корневой страницы (1227 байт).</em></p>
-        <img src="screenshots/1.png" alt="Скриншот задания 1">
+Content-Length: 335
+Content-Type: text/html; charset=UTF-8
+
+PHP is working!&lt;br /&gt;
+&lt;b&gt;Fatal error&lt;/b&gt;:  Uncaught PDOException: SQLSTATE[HY000] [1045] Access denied for user 'u68592'@'localhost' (using password: YES) in /home/u82590/www/index.php:6
+Stack trace:
+#0 /home/u82590/www/index.php(6): PDO->__construct()
+#1 {main}
+    thrown in &lt;b&gt;/home/u82590/www/index.php&lt;/b&gt; on line &lt;b&gt;6&lt;/b&gt;&lt;br /&gt;</pre>
+        <p><em>Несмотря на ошибку PHP, заголовки получены, статус 200 OK.</em></p>
+        <img src="screenshots/1.png" alt="Скриншот задания 1 (GET / HTTP/1.0)">
     </div>
 
     <!-- ЗАДАНИЕ 2 -->
     <div class="task-card">
         <h2>2. GET внутренней страницы – HTTP/1.1</h2>
         <p><strong>Запрос:</strong></p>
-        <pre>GET /s0196039_back.github.io/task2/ HTTP/1.1
-Host: u82356.kubsu-dev.ru
+        <pre>GET /web-backend/task2/ HTTP/1.1
+Host: u82590.kubsu-dev.ru
 
 </pre>
-        <p><strong>Ответ (заголовки + тело):</strong></p>
+        <p><strong>Ответ (заголовки и тело):</strong></p>
         <pre>HTTP/1.1 200 OK
-Date: Wed, 20 May 2026 23:01:57 GMT
+Date: Sun, 07 Jun 2026 22:24:49 GMT
 Server: Apache/2.4.58 (Ubuntu)
-Last-Modified: Sat, 16 May 2026 19:35:47 GMT
-ETag: "26b-651f46fa4235e"
-Accept-Ranges: bytes
-Content-Length: 619
-Vary: Accept-Encoding
-Content-Type: text/html
-
-&lt;!DOCTYPE html&gt;
-&lt;html lang="ru"&gt;
-&lt;head&gt;...&lt;title&gt;Web backend&lt;/title&gt;&lt;/head&gt;
-&lt;body&gt;
-&lt;h1&gt;Task 2&lt;/h1&gt;
-&lt;h2&gt;Screenshots&lt;/h2&gt;
-...
-&lt;/body&gt;&lt;/html&gt;</pre>
-        <img src="screenshots/2.png" alt="Скриншот задания 2">
+Content-Type: text/html; charset=UTF-8
+... (тело – страница со списком лабораторных работ)</pre>
+        <p><em>Скриншот показывает часть HTML‑кода внутренней страницы (содержит ссылки на задачи).</em></p>
+        <img src="screenshots/2.png" alt="Скриншот задания 2 (GET /web-backend/task2/)">
     </div>
 
     <!-- ЗАДАНИЕ 3 -->
     <div class="task-card">
         <h2>3. Размер file.tar.gz (HEAD, без скачивания)</h2>
         <p><strong>Запрос:</strong></p>
-        <pre>HEAD /s0196039_back.github.io/task2/file.tar.gz HTTP/1.1
-Host: u82356.kubsu-dev.ru
+        <pre>HEAD /web-backend/task2/file.tar.gz HTTP/1.1
+Host: u82590.kubsu-dev.ru
 
 </pre>
         <p><strong>Ответ:</strong></p>
         <pre>HTTP/1.1 200 OK
-Date: Wed, 20 May 2026 23:02:27 GMT
+Date: Sun, 07 Jun 2026 22:25:02 GMT
 Server: Apache/2.4.58 (Ubuntu)
-Last-Modified: Sat, 16 May 2026 19:35:47 GMT
-ETag: "2c47-651f46fa41f76"
+Last-Modified: Sun, 07 Jun 2026 22:20:31 GMT
+ETag: "2c47-653b14d53b9a7"
 Accept-Ranges: bytes
 Content-Length: 11335
 Content-Type: application/x-gzip</pre>
         <p><strong>Размер файла:</strong> 11335 байт.</p>
-        <img src="screenshots/3.png" alt="Скриншот задания 3">
+        <img src="screenshots/3.png" alt="Скриншот задания 3 (HEAD file.tar.gz)">
     </div>
 
     <!-- ЗАДАНИЕ 4 -->
     <div class="task-card">
         <h2>4. Медиатип /image.png</h2>
         <p><strong>Запрос:</strong></p>
-        <pre>HEAD /s0196039_back.github.io/task2/image.png HTTP/1.1
-Host: u82356.kubsu-dev.ru
+        <pre>HEAD /web-backend/task2/image.png HTTP/1.1
+Host: u82590.kubsu-dev.ru
 
 </pre>
         <p><strong>Ответ:</strong></p>
         <pre>HTTP/1.1 200 OK
-Date: Wed, 20 May 2026 23:02:49 GMT
+Date: Sun, 07 Jun 2026 22:25:42 GMT
 Server: Apache/2.4.58 (Ubuntu)
-Last-Modified: Sat, 16 May 2026 19:35:47 GMT
-ETag: "290a-651f46fa4235e"
+Last-Modified: Sun, 07 Jun 2026 22:20:31 GMT
+ETag: "290a-653b14d53b9a7"
 Accept-Ranges: bytes
 Content-Length: 10506
 Content-Type: image/png</pre>
         <p><strong>Медиатип:</strong> image/png</p>
-        <img src="screenshots/4.png" alt="Скриншот задания 4">
+        <img src="screenshots/4.png" alt="Скриншот задания 4 (HEAD image.png)">
     </div>
 
     <!-- ЗАДАНИЕ 5 -->
     <div class="task-card">
         <h2>5. Отправить комментарий в /index.php (POST)</h2>
         <p><strong>Запрос:</strong></p>
-        <pre>POST /s0196039_back.github.io/task2/index.php HTTP/1.1
-Host: u82356.kubsu-dev.ru
+        <pre>POST /web-backend/task2/index.php HTTP/1.1
+Host: u82590.kubsu-dev.ru
 Content-Type: application/x-www-form-urlencoded
 Content-Length: 13
 
 comment=Hello</pre>
         <p><strong>Ответ:</strong></p>
         <pre>HTTP/1.1 404 Not Found
-Date: Wed, 20 May 2026 23:03:18 GMT
+Date: Sun, 07 Jun 2026 22:26:07 GMT
 Server: Apache/2.4.58 (Ubuntu)
 Content-Length: 55
 Content-Type: text/html; charset=UTF-8
@@ -304,50 +290,54 @@ Array
     [comment] => Hello
 )
 
-Привет, мир!</pre>
-        <p><em>Скрипт выполнился, комментарий принят (несмотря на 404).</em></p>
-        <img src="screenshots/5.png" alt="Скриншот задания 5">
+Привет, мир!1</pre>
+        <p><em>Комментарий принят, несмотря на статус 404.</em></p>
+        <img src="screenshots/5.png" alt="Скриншот задания 5 (POST comment)">
     </div>
 
     <!-- ЗАДАНИЕ 6 -->
     <div class="task-card">
         <h2>6. Получить первые 100 байт file.tar.gz (Range)</h2>
         <p><strong>Запрос:</strong></p>
-        <pre>GET /s0196039_back.github.io/task2/file.tar.gz HTTP/1.1
-Host: u82356.kubsu-dev.ru
+        <pre>GET /web-backend/task2/file.tar.gz HTTP/1.1
+Host: u82590.kubsu-dev.ru
 Range: bytes=0-99
 
 </pre>
         <p><strong>Ответ:</strong></p>
         <pre>HTTP/1.1 206 Partial Content
-Date: Wed, 20 May 2026 23:03:44 GMT
+Date: Sun, 07 Jun 2026 22:27:11 GMT
 Server: Apache/2.4.58 (Ubuntu)
-Last-Modified: Sat, 16 May 2026 19:35:47 GMT
-ETag: "2c47-651f46fa41f76"
+Last-Modified: Sun, 07 Jun 2026 22:20:31 GMT
+ETag: "2c47-653b14d53b9a7"
 Accept-Ranges: bytes
 Content-Length: 100
 Content-Range: bytes 0-99/11335
 Content-Type: application/x-gzip
 
 [бинарные данные – первые 100 байт архива]</pre>
-        <img src="screenshots/6.png" alt="Скриншот задания 6">
+        <img src="screenshots/6.png" alt="Скриншот задания 6 (Range)">
     </div>
 
     <!-- ЗАДАНИЕ 7 -->
     <div class="task-card">
         <h2>7. Определить кодировку /index.php</h2>
         <p><strong>Запрос:</strong></p>
-        <pre>HEAD /s0196039_back.github.io/task2/index.php HTTP/1.1
-Host: u82356.kubsu-dev.ru
+        <pre>HEAD /web-backend/task2/index.php HTTP/1.1
+Host: u82590.kubsu-dev.ru
 
 </pre>
         <p><strong>Ответ:</strong></p>
         <pre>HTTP/1.1 404 Not Found
-Date: Wed, 20 May 2026 23:04:10 GMT
+Date: Sun, 07 Jun 2026 22:27:37 GMT
 Server: Apache/2.4.58 (Ubuntu)
 Content-Type: text/html; charset=UTF-8</pre>
         <p><strong>Кодировка:</strong> UTF-8 (параметр charset в Content-Type).</p>
-        <img src="screenshots/7.png" alt="Скриншот задания 7">
+        <img src="screenshots/7.png" alt="Скриншот задания 7 (HEAD index.php)">
+    </div>
+
+    <div class="final-message">
+        Все 7 заданий выполнены через telnet к серверу <code>u82590.kubsu-dev.ru</code>. Скриншоты приложены.
     </div>
 </div>
 </body>
