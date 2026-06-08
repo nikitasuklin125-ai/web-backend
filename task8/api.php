@@ -50,7 +50,7 @@ if ($method === 'POST' && $action === '') {
         'success' => true,
         'login' => $login,
         'password' => $password,
-        'profile_url' => '/web_backend/task8/edit.html' // соответствует edit.html
+        'profile_url' => '/web-backend/task8/edit.html' // соответствует edit.html
     ]);
 }
 
