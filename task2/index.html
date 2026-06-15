@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web backend · Task 2 (telnet, сервер u82590)</title>
+    <title>Web backend · Task 2 (telnet, сервер u82590) — подробно</title>
     <style>
         * {
             margin: 0;
@@ -118,6 +118,27 @@
             border-color: #5e7687;
         }
 
+        .screenshot-description {
+            padding: 1rem 1rem 1.2rem 1rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #cddfed;
+            background: #0b0f14;
+            border-top: 1px solid #2e3b44;
+            border-radius: 0 0 1rem 1rem;
+            margin-top: -0.5rem;
+        }
+
+        .screenshot-description code {
+            background: #1e242c;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #bdd4e8;
+            border: 1px solid #2e3a42;
+        }
+
         .final-message {
             background: #10161c;
             border-radius: 1.2rem;
@@ -178,7 +199,9 @@
         <h1>Task 2 – выполнение через telnet</h1>
         <div class="subhead">
             Сервер: <strong>u82590.kubsu-dev.ru</strong><br>
-            Все запросы отправлялись через <code>telnet u82590.kubsu-dev.ru 80</code>.<br>
+            Порт: 80 (HTTP)<br>
+            Команда подключения: <code>telnet u82590.kubsu-dev.ru 80</code><br>
+            После каждого запроса обязательно два нажатия Enter (пустая строка) для отправки заголовков.
         </div>
     </div>
 
@@ -204,7 +227,9 @@ Stack trace:
 #0 /home/u82590/www/index.php(6): PDO->__construct()
 #1 {main}
     thrown in &lt;b&gt;/home/u82590/www/index.php&lt;/b&gt; on line &lt;b&gt;6&lt;/b&gt;&lt;br /&gt;</pre>
-        <p><em>Несмотря на ошибку PHP, заголовки получены, статус 200 OK.</em></p>
+        <div class="screenshot-description">
+            <strong>Описание:</strong> Установлено telnet-соединение с сервером. Отправлен HTTP-запрос методом <code>GET</code> по протоколу <code>HTTP/1.0</code> к корневому ресурсу <code>/</code>. Заголовок <code>Host</code> обязателен для виртуальных хостов. В ответе сервер вернул статус <code>200 OK</code>, заголовки и тело. Тело содержит сообщение об ошибке PHP (не удалось подключиться к БД), но сам факт получения ответа доказывает работоспособность сервера. Скриншот показывает весь сеанс.
+        </div>
         <img src="screenshots/1.png" alt="Скриншот задания 1 (GET / HTTP/1.0)">
     </div>
 
@@ -222,7 +247,9 @@ Date: Sun, 07 Jun 2026 22:24:49 GMT
 Server: Apache/2.4.58 (Ubuntu)
 Content-Type: text/html; charset=UTF-8
 ... (тело – страница со списком лабораторных работ)</pre>
-        <p><em>Скриншот показывает часть HTML‑кода внутренней страницы (содержит ссылки на задачи).</em></p>
+        <div class="screenshot-description">
+            <strong>Описание:</strong> Запрос к каталогу <code>/web-backend/task2/</code> с использованием <code>HTTP/1.1</code>. Сервер ответил статусом <code>200 OK</code>, отдал HTML-страницу, содержащую ссылки на лабораторные работы (задания 1..8). Скриншот показывает начало HTML-кода этой страницы. Заголовок <code>Content-Type: text/html; charset=UTF-8</code> указывает на тип и кодировку.
+        </div>
         <img src="screenshots/2.png" alt="Скриншот задания 2 (GET /web-backend/task2/)">
     </div>
 
@@ -243,7 +270,9 @@ ETag: "2c47-653b14d53b9a7"
 Accept-Ranges: bytes
 Content-Length: 11335
 Content-Type: application/x-gzip</pre>
-        <p><strong>Размер файла:</strong> 11335 байт.</p>
+        <div class="screenshot-description">
+            <strong>Описание:</strong> Метод <code>HEAD</code> используется для получения только заголовков без тела ответа. Это позволяет узнать размер файла (поле <code>Content-Length</code>) без его загрузки. В ответе видим, что файл <code>file.tar.gz</code> имеет размер <strong>11335 байт</strong>. Также сервер сообщает тип содержимого <code>application/x-gzip</code> и поддерживает частичную загрузку (<code>Accept-Ranges: bytes</code>).
+        </div>
         <img src="screenshots/3.png" alt="Скриншот задания 3 (HEAD file.tar.gz)">
     </div>
 
@@ -264,7 +293,9 @@ ETag: "290a-653b14d53b9a7"
 Accept-Ranges: bytes
 Content-Length: 10506
 Content-Type: image/png</pre>
-        <p><strong>Медиатип:</strong> image/png</p>
+        <div class="screenshot-description">
+            <strong>Описание:</strong> Аналогично предыдущему пункту, метод <code>HEAD</code> для файла <code>image.png</code>. Заголовок <code>Content-Type: image/png</code> определяет медиатип (MIME-тип) как PNG-изображение. Размер файла — 10506 байт. Это подтверждает, что на сервере действительно лежит графический файл.
+        </div>
         <img src="screenshots/4.png" alt="Скриншот задания 4 (HEAD image.png)">
     </div>
 
@@ -291,7 +322,9 @@ Array
 )
 
 Привет, мир!1</pre>
-        <p><em>Комментарий принят, несмотря на статус 404.</em></p>
+        <div class="screenshot-description">
+            <strong>Описание:</strong> Отправлен <code>POST</code>‑запрос к скрипту <code>index.php</code> с параметром <code>comment=Hello</code> в теле. Несмотря на то, что сервер вернул статус <code>404 Not Found</code> (сам скрипт, вероятно, не предназначен для прямого вызова), скрипт всё равно выполнился и вывел содержимое массива <code>$_POST</code> и строку "Привет, мир!1". Это демонстрирует, что PHP обработал запрос и данные были переданы.
+        </div>
         <img src="screenshots/5.png" alt="Скриншот задания 5 (POST comment)">
     </div>
 
@@ -316,6 +349,9 @@ Content-Range: bytes 0-99/11335
 Content-Type: application/x-gzip
 
 [бинарные данные – первые 100 байт архива]</pre>
+        <div class="screenshot-description">
+            <strong>Описание:</strong> Использован заголовок <code>Range: bytes=0-99</code> для запроса только первых 100 байт файла. Сервер ответил статусом <code>206 Partial Content</code> (частичное содержимое), указал точный диапазон в <code>Content-Range</code> и прислал 100 бинарных байт. Это стандартный механизм для докачки файлов и потоковой передачи.
+        </div>
         <img src="screenshots/6.png" alt="Скриншот задания 6 (Range)">
     </div>
 
@@ -332,12 +368,14 @@ Host: u82590.kubsu-dev.ru
 Date: Sun, 07 Jun 2026 22:27:37 GMT
 Server: Apache/2.4.58 (Ubuntu)
 Content-Type: text/html; charset=UTF-8</pre>
-        <p><strong>Кодировка:</strong> UTF-8 (параметр charset в Content-Type).</p>
+        <div class="screenshot-description">
+            <strong>Описание:</strong> Запрос <code>HEAD</code> к тому же скрипту <code>index.php</code>. В заголовке ответа <code>Content-Type: text/html; charset=UTF-8</code> явно указана кодировка символов <strong>UTF-8</strong>. Таким образом, мы определили, что сервер отдаёт страницы в кодировке Unicode, что обеспечивает корректное отображение любых символов.
+        </div>
         <img src="screenshots/7.png" alt="Скриншот задания 7 (HEAD index.php)">
     </div>
 
     <div class="final-message">
-        Все 7 заданий выполнены через telnet к серверу <code>u82590.kubsu-dev.ru</code>. Скриншоты приложены.
+        Все 7 заданий выполнены через telnet к серверу <code>u82590.kubsu-dev.ru</code> на порту 80. Скриншоты приложены и детально описаны.
     </div>
 </div>
 </body>

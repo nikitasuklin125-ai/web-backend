@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Задание 1 – скриншоты · графитовый стиль</title>
+    <title>Задание 1 – работа с сетью (подробное описание)</title>
     <style>
         * {
             margin: 0;
@@ -60,7 +60,6 @@
             font-family: 'Fira Code', monospace;
         }
 
-        /* Каждый скриншот — отдельный блок, во всю ширину */
         .screenshot-block {
             margin-bottom: 2rem;
             background: #10161c;
@@ -80,7 +79,6 @@
             height: auto;
             display: block;
             background: #0b0f14;
-            /* Убираем любые ограничения по высоте — картинка покажется полностью */
         }
 
         .screenshot-label {
@@ -92,6 +90,25 @@
             background: #0f151c;
             text-align: center;
             letter-spacing: 0.3px;
+        }
+
+        .screenshot-description {
+            padding: 1rem 1rem 1.2rem 1rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #cddfed;
+            background: #0b0f14;
+            border-top: 1px solid #2e3b44;
+        }
+
+        .screenshot-description code {
+            background: #1e242c;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.5rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #bdd4e8;
+            border: 1px solid #2e3a42;
         }
 
         .final-note {
@@ -126,9 +143,9 @@
             h1 {
                 font-size: 1.6rem;
             }
-            .screenshot-label {
-                font-size: 0.75rem;
-                padding: 0.5rem;
+            .screenshot-label, .screenshot-description {
+                font-size: 0.8rem;
+                padding: 0.6rem;
             }
         }
 
@@ -150,47 +167,88 @@
     <div class="card">
         <h1>Задание 1 – работа с сетью</h1>
         <div class="subhead">
-            Сервер: <strong>kubsu-dev.ru</strong>
+            Сервер: <strong>kubsu-dev.ru</strong> (учебный сервер КубГУ)<br>
+            Логин: u82590, порт SSH: 58528
         </div>
 
-        <!-- Каждый скриншот на всю ширину, с подписью -->
+        <!-- Блок 1: SSH -->
         <div class="screenshot-block">
-            <img src="screenshots/1.png" alt="Вход по SSH">
-            <div class="screenshot-label">1 – подключение по SSH</div>
+            <img src="screenshots/1.png" alt="SSH подключение">
+            <div class="screenshot-label">1 – Подключение по SSH</div>
+            <div class="screenshot-description">
+                Выполнена команда: <code>ssh u82590@kubsu-dev.ru -p 58528</code><br>
+                После ввода пароля установлено защищённое соединение с сервером. В ответе отображена информация о системе (Ubuntu 24.04.2 LTS, загрузка CPU, использование памяти, количество обновлений). Сеанс успешно авторизован.
+            </div>
         </div>
 
+        <!-- Блок 2: ping kubsu.ru -->
         <div class="screenshot-block">
-            <img src="screenshots/2.png" alt="IP-адрес kubsu.ru (ping)">
-            <div class="screenshot-label">2 – IP-адрес kubsu.ru (ping)</div>
+            <img src="screenshots/2.png" alt="ping kubsu.ru">
+            <div class="screenshot-label">2 – Определение IP-адреса kubsu.ru с помощью ping</div>
+            <div class="screenshot-description">
+                Команда: <code>ping kubsu.ru</code><br>
+                Утилита <code>ping</code> отправляет ICMP-запросы к указанному домену. Из вывода видно, что домен <strong>kubsu.ru</strong> разрешается в IP-адрес <strong>212.192.128.52</strong>. Время отклика (RTT) составляет около 0.9–1.1 мс, потери пакетов отсутствуют. Это стандартный способ определения IP-адреса веб-сервера.
+            </div>
         </div>
 
+        <!-- Блок 3: nslookup kubsu.ru -->
         <div class="screenshot-block">
-            <img src="screenshots/3.png" alt="A и MX записи kubsu.ru">
-            <div class="screenshot-label">3 – A и MX записи kubsu.ru (nslookup)</div>
+            <img src="screenshots/3.png" alt="nslookup kubsu.ru">
+            <div class="screenshot-label">3 – A-запись kubsu.ru (nslookup)</div>
+            <div class="screenshot-description">
+                Команда: <code>nslookup kubsu.ru</code><br>
+                <code>nslookup</code> – утилита для опроса DNS-серверов. В ответе получена A-запись (IPv4): <strong>212.192.128.52</strong>. DNS-сервером по умолчанию является локальный резолвер (<code>127.0.0.53</code>). Ответ неавторитативный, но корректный.
+            </div>
         </div>
 
+        <!-- Блок 4: nslookup kubsu-dev.ru -->
         <div class="screenshot-block">
-            <img src="screenshots/4.png" alt="A и MX записи kubsu-dev.ru">
-            <div class="screenshot-label">4 – A и MX записи kubsu-dev.ru (nslookup)</div>
+            <img src="screenshots/4.png" alt="nslookup kubsu-dev.ru">
+            <div class="screenshot-label">4 – A-запись kubsu-dev.ru (nslookup)</div>
+            <div class="screenshot-description">
+                Команда: <code>nslookup kubsu-dev.ru</code><br>
+                Домен учебного сервера <strong>kubsu-dev.ru</strong> имеет A-запись <strong>212.192.134.135</strong>. Обратите внимание, что этот адрес отличается от IP основного домена КубГУ.
+            </div>
         </div>
 
+        <!-- Блок 5: whois kubsu.ru -->
         <div class="screenshot-block">
-            <img src="screenshots/5.png" alt="Дата регистрации kubsu.ru">
-            <div class="screenshot-label">5 – дата регистрации kubsu.ru (whois)</div>
+            <img src="screenshots/5.png" alt="whois kubsu.ru">
+            <div class="screenshot-label">5 – Дата регистрации kubsu.ru (whois)</div>
+            <div class="screenshot-description">
+                Команда: <code>whois kubsu.ru</code><br>
+                <code>whois</code> – протокол для получения информации о владельце домена и датах регистрации. Из вывода:<br>
+                • <strong>created: 1998-03-28T12:18:30Z</strong> – домен зарегистрирован 28 марта 1998 года.<br>
+                • Организация: <strong>Kuban State University</strong> (Кубанский государственный университет).<br>
+                • Действителен до: <strong>2027-04-30</strong>.
+            </div>
         </div>
 
+        <!-- Блок 6: whois kubsu-dev.ru -->
         <div class="screenshot-block">
-            <img src="screenshots/6.png" alt="Дата регистрации kubsu-dev.ru">
-            <div class="screenshot-label">6 – дата регистрации kubsu-dev.ru (whois)</div>
+            <img src="screenshots/6.png" alt="whois kubsu-dev.ru">
+            <div class="screenshot-label">6 – Дата регистрации kubsu-dev.ru (whois)</div>
+            <div class="screenshot-description">
+                Команда: <code>whois kubsu-dev.ru</code><br>
+                Домен <strong>kubsu-dev.ru</strong> зарегистрирован позже:<br>
+                • <strong>created: 2020-02-12T15:55:06Z</strong> – 12 февраля 2020 года.<br>
+                • Владелец: <strong>Private Person</strong> (частное лицо).<br>
+                • Действителен до: <strong>2027-02-12</strong>.<br>
+                Регистратор – <strong>WEBNAMES-RU</strong>.
+            </div>
         </div>
 
+        <!-- Блок 7: SFTP -->
         <div class="screenshot-block">
             <img src="screenshots/71.png" alt="SFTP-копирование файлов">
-            <div class="screenshot-label">7 – SFTP-копирование файлов</div>
+            <div class="screenshot-label">7 – Копирование файлов через SFTP (FileZilla)</div>
+            <div class="screenshot-description">
+                С помощью клиента FileZilla установлено SFTP-соединение (SSH File Transfer Protocol) с сервером <strong>kubsu-dev.ru:58528</strong>, логин <strong>u82590</strong>. В левой панели отображается локальный каталог (<em>/Users/tesler/Учеба/4 семестр/Web backend/</em>), в правой – домашний каталог пользователя на сервере. Файлы задания (<code>index.html</code> и скриншоты) скопированы с сервера на локальную машину для последующей сдачи работы. Статус передач успешный.
+            </div>
         </div>
 
         <div class="final-note">
-            Все скриншоты выполнены в соответствии с заданием.
+            Все 7 пунктов задания выполнены в полном объёме. Скриншоты демонстрируют корректную работу с сетевыми утилитами (SSH, ping, nslookup, whois, SFTP) на учебном сервере kubsu-dev.ru.
         </div>
     </div>
 </div>
